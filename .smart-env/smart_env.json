@@ -1,0 +1,72 @@
+{
+  "is_obsidian_vault": true,
+  "smart_blocks": {
+    "embed_blocks": true,
+    "min_chars": 200
+  },
+  "smart_sources": {
+    "single_file_data_path": ".smart-env/smart_sources.json",
+    "min_chars": 200,
+    "embed_model": {
+      "adapter": "transformers",
+      "transformers": {
+        "legacy_transformers": false,
+        "model_key": "TaylorAI/bge-micro-v2"
+      },
+      "TaylorAI/bge-micro-v2": {}
+    }
+  },
+  "file_exclusions": "Untitled",
+  "folder_exclusions": "smart-chats",
+  "smart_view_filter": {
+    "render_markdown": true,
+    "show_full_path": false,
+    "results_limit": "20"
+  },
+  "smart_notices": {
+    "muted": {}
+  },
+  "excluded_headings": "",
+  "smart_threads": {
+    "chat_model": {
+      "adapter": "lm_studio",
+      "openai": {
+        "model_key": ""
+      },
+      "lm_studio": {
+        "model_key": "deepseek-r1-distill-qwen-7b",
+        "models": {
+          "llama-translate": {
+            "id": "llama-translate",
+            "model_name": "llama-translate",
+            "description": "LM Studio model: llama-translate",
+            "multimodal": false
+          },
+          "deepseek-r1-distill-qwen-7b": {
+            "id": "deepseek-r1-distill-qwen-7b",
+            "model_name": "deepseek-r1-distill-qwen-7b",
+            "description": "LM Studio model: deepseek-r1-distill-qwen-7b",
+            "multimodal": false
+          },
+          "text-embedding-nomic-embed-text-v1.5": {
+            "id": "text-embedding-nomic-embed-text-v1.5",
+            "model_name": "text-embedding-nomic-embed-text-v1.5",
+            "description": "LM Studio model: text-embedding-nomic-embed-text-v1.5",
+            "multimodal": false
+          }
+        },
+        "api_key": "http://127.0.0.1:1234"
+      },
+      "ollama": {
+        "model_key": ""
+      }
+    },
+    "embed_model": {
+      "model_key": "None"
+    },
+    "language": "zh-TW",
+    "review_context": false,
+    "lookup_limit": "10",
+    "send_tool_output_in_user_message": false
+  }
+}

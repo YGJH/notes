@@ -1,0 +1,29 @@
+# [原始文章 CSDN](https://blog.csdn.net/zhangzker/article/details/53257695)
+- DRAM，动态随机存取存储器，需要不断的刷新，才能保存数据.而且是行列地址复用的，许多都有页模式
+- SRAM，静态的随机存取存储器，加电情况下，不需要刷新，数据不会丢失，而且，一般不是行列地址复用的
+- SDRAM，同步的DRAM，即数据的读写需要时钟来同步
+- DRAM和SDRAM由于实现工艺问题，容量较SRAM大
+- 但是读写速度不如SRAM，但是现在，SDRAM的速度也已经很快了，时钟好像已经有 150兆的了
+- 那么就是读写周期小于10ns了
+- SRAM是静态内存，SDRAM是同步动态内存 每单位容量的DRAM使用较少的晶体管而且占用面积小，而SRAM则是用较多晶体管占用的面也要相对大不少；DRAM需要不断刷新来维持所存储的数据，SRAM则不需要；DRAM的存取时钟间隔长，而SRAM的速度快，时间短；DRAM的耗电低，SRAM耗电大
+- 目前，相同容量的SRAM价格是SDRAM的8倍左右，面积则将近大4倍，所以SRAM常用于快速存储的较低容量的RAM需求，比如Cache(缓存），比如CPU内部的L1 Cache和主板上的L2 Cache，一般只有几百K
+- 布线上可以同样遵守高速设计的需要，具体可参考厂家设计规范要求
+- ROM和RAM指的都是半导体存储器，ROM是Read Only Memory的缩写，RAM是Random Access Memory的缩写
+- ROM在系统停止供电的时候仍然可以保持数据，而RAM通常都是在掉电之后就丢失数据，典型的RAM就是计算机的内存
+- RAM有两大类，一种称为静态RAM（Static RAM/SRAM），SRAM速度非常快，是目前读写最快的存储设备了，但是它也非常昂贵，所以只在要求很苛刻的地方使用，譬如CPU的一级缓冲，二级缓冲
+- 另一种称为动态RAM（Dynamic RAM/DRAM），DRAM保留数据的时间很短，速度也比SRAM慢，不过它还是比任何的ROM都要快，但从价格上来说DRAM相比SRAM要便宜很多，计算机内存就是DRAM的
+- DRAM分为很多种，常见的主要有FPRAM/FastPage、EDORAM、SDRAM、DDR RAM、RDRAM、SGRAM以及WRAM等，这里介绍其中的一种DDR RAM
+- DDR RAM（ Double-Date-Rate RAM）也称作DDR SDRAM，这种改进型的RAM和SDRAM是基本一样的，不同之处在于它可以在一个时钟读写两次数据，这样就使得数据传输速度加倍了
+- 这是目前电脑中用得最多的内存，而且它有着成本优势，事实上击败了Intel的另外一种内存标准－Rambus DRAM
+- 在很多高端的显卡上，也配备了高速DDR RAM来提高带宽，这可以大幅度提高3D加速卡的像素渲染能力
+- ROM也有很多种，PROM是可编程的ROM，PROM和EPROM（可擦除可编程ROM）两者区别是，PROM是一次性的，也就是软件灌入后，就无法修改了，这种是早期的产品，现在已经不可能使用了，而EPROM是通过紫外光的照射擦出原先的程序，是一种通用的存储器
+- 另外一种EEPROM是通过电子擦出，价格很高，写入时间很长，写入很慢
+- 举个例子，手机软件一般放在EEPROM中，我们打电话，有些最后拨打的号码，暂时是存在SRAM中的，不是马上写入通过记录（通话记录保存在EEPROM中），因为当时有很重要工作（通话）要做，如果写入，漫长的等待是让用户忍无可忍的
+- FLASH存储器又称闪存，它结合了ROM和RAM的长处，不仅具备电子可擦出可编程（EEPROM）的性能，还不会断电丢失数据同时可以快速读取数据（NVRAM的优势），U盘和MP3里用的就是这种存储器
+- 在过去的20年里，嵌入式系统一直使用ROM（EPROM）作为它们的存储设备，然而近年来Flash全面代替了ROM（EPROM）在嵌入式系统中的地位，用作存储Bootloader以及操作系统或者程序代码或者直接当硬盘使用（U盘）
+- 目前Flash主要有两种NOR Flash和NADN Flash
+- NOR Flash的读取和我们常见的SDRAM的读取是一样，用户可以直接运行装载在NOR FLASH里面的代码，这样可以减少SRAM的容量从而节约了成本
+- NAND Flash没有采取内存的随机读取技术，它的读取是以一次读取一快的形式来进行的，通常是一次读取512个字节，采用这种技术的Flash比较廉价
+- 用户不能直接运行NAND Flash上的代码，因此好多使用NAND Flash的开发板除了使用NAND Flah以外，还作上了一块小的NOR Flash来运行启动代码
+- 一般小容量的用NOR Flash，因为其读取速度快，多用来存储操作系统等重要信息，而大容量的用NAND FLASH，最常见的NAND FLASH应用是嵌入式系统采用的DOC（Disk On Chip）和我们通常用的“闪盘”，可以在线擦除
+- 目前市面上的FLASH 主要来自Intel，AMD，Fujitsu和Toshiba，而生产NAND Flash的主要厂家有Samsung和Toshiba
