@@ -62,7 +62,7 @@
     
 - **與 dot product 的關聯**：
     
-    - 每個元素 $AB)_{ij}$，就是「AA 的第 ii 列」跟「BB 的第 jj 行」做 **dot product**。
+    - 每個元素 $AB)_{ij}$，就是「A 的第 i 列」跟「B 的第 j 行」做 **dot product**。
         
 - **範例**：
     
