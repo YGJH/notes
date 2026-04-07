@@ -169,12 +169,14 @@ $Pr(Di​∣Ri​,Ai​)=Pr(Di​∣Ri​)$
     - 既然 A 群體裡這類「如果不關就會再犯」的人比較多，而法官又很公正地針對這類人發出拘留令，那麼自然的結果就是 **A 群體的總拘留率會比較高**。
 
 
-#Definition 2 (Statistical Fairness) A decision-making mechanism is fair with respect to the outcome of interest Yi and the protected attribute Ai if the resulting decision Di satisfies a certain conditional independence relationship. Prominent examples of such relationships used in the literature are given below
+#Definition 2 (Statistical Fairness) A decision-making mechanism is fair with respect to the outcome of interest $Y_i$ and the protected attribute $A_i$ if the resulting decision Di satisfies a certain conditional independence relationship. Prominent examples of such relationships used in the literature are given below
 
 (a) Overall parity: $Pr(Di | Ai) = Pr(Di)$
 (b) Calibration: $Pr(Yi | Di , Ai) = Pr(Yi | Di)$
 (c) Accuracy: $Pr(Di | Yi , Ai) = Pr(Di | Yi)$
 
+conditional independen:   
+		$P(A \wedge B|C) = P(A|C)P(B|C)$
 
 「統計公平」= 三個具體的標準：**(a) 整體均等 (Overall Parity)**、**(b) 校準 (Calibration)**、**(c) 準確性 (Accuracy)**。
 
@@ -237,6 +239,10 @@ $Pr(Di​∣Ri​,Ai​)=Pr(Di​∣Ri​)$
 - **整體均等**忽略了犯罪率可能不同。
     
 - **校準**和**準確性**雖然考慮了結果 Y，但它們看的是**觀測到的結果**（Observed Outcome），而不是**因果上的潛在結果**（Potential Outcome），這就是主層公平性要改進的地方。
+
+
+
+
 
 #Theorem 1 Suppose that Ai⊥⊥Ri. Then, principal fairness in Definition 1 implies all three statistical definitions of fairness given in Definition 2.
 
@@ -370,7 +376,16 @@ $\Rightarrow$ **Principal Fairness 不成立！** (抓出作弊)
 
 - Assumption 1 is plausible in many applications when the effect of the decision on the outcome is non-positive for all individuals. In our criminal justice example, the assumption implies that detention makes it no more likely for an arrestee to commit a new crime in comparison to release. The following theorem establishes the exact relationship between Pr(Di | Ri , Ai) with Pr(Di , Yi | Ai) under Assumption 1.
 
+## Assumption 1: Monotonicity (單調性假設)
 
+- **公式：** $Y_i(1) \le Y_i(0)$
+    
+- **白話文：** 這是一個符合常理的邏輯假設。意思是「**被關起來，不會讓人更容易去犯罪**」。
+    
+    - $Y_i(1)$ 是被關押時的犯罪結果，$Y_i(0)$ 是被釋放時的犯罪結果。
+        
+    - 這個假設排除了那種「原本放出去不會犯罪，結果法官把他關起來，反而導致他（在監獄裡）犯罪」的極端怪異情況。這能讓後面的數學推導得以成立。
+-
 #Theorem 2 Under Assumption 1, we have
 
 $Pr(Di = 1 | R = (0, 0), Ai) = 1 − \displaystyle\frac{Pr(Di = 0, Yi = 0 | Ai)}{Pr(Ri = (0, 0) | Ai)}$ 
@@ -384,8 +399,49 @@ $Pr(Di = 1 | R = (1, 1), Ai) = \displaystyle\frac{Pr(Di = 1, Yi = 1 | Ai)}{Pr(Ri
 - $D$：決定
 - $A$：特徵
 
+## 2. Theorem 2: Deriving Latent Probabilities (定理二：推導潛在機率)
+
+這是這頁簡報**最核心的貢獻**。
+
+還記得我們說過 Principal Fairness 的難點在於：**我們看不出一個人的「潛在類別」是什麼嗎？** 在這套假設下，人被分成了三種潛在類別（對應簡報上的 Safe, Prev., Risk）：
+
+1. **Safe（絕對安全）**：不管放不放，都不會犯罪。
+    
+2. **Prev. (Preventable，可預防的)**：如果放出去就會犯罪，但關起來就不會犯罪。（_註：簡報上寫 (0,1) 可能是筆誤或符號定義相反，按照單調性假設，通常這組會標示為 (1,0)，但意思是明確的。_）
+    
+3. **Risk（高風險）**：不管關不關都會犯罪。
+
+
+**定理二在解決什麼問題？**
+
+在現實世界的數據庫裡，我們只能看到「這個人有沒有被關 ($D$)」以及「他後來有沒有犯罪 ($Y$)」。我們**無法直接看到**他到底是 Safe 還是 Risk 這類隱藏屬性。
+
+那堆看起來很複雜的公式，其實就是一個**「翻譯機」**。 它證明了：只要我們手上有現實中看得到的統計數據（公式右邊那些包含 $D$ 和 $Y$ 的機率），我們就可以**透過數學公式反推算出**法官在面對那些「看不見的 Safe」或「看不見的 Risk」族群時，做出關押決定 ($D=1$) 的真實機率是多少（公式左邊）。
+
+
 
 #Corollary 1 Suppose that Ai⊥⊥Ri holds. Then, under Assumptions 1, principal fairness is equivalent to the three statistical fairness criteria given in Definition 2
+
+$$A_i \perp R_i \mid W_i$$
+
+這是一個統計學上的「條件獨立 (Conditional Independence)」假設。我們把變數拆開來看：
+
+- **$W_i$ (Covariates)**：協變量，也就是我們能觀察到的「背景特徵」（例如：教育程度、過往犯罪紀錄、財務狀況等）。
+    
+- **$A_i$ (Protected attribute)**：敏感屬性（例如：種族、性別）。
+    
+- **$R_i$ (Principal strata)**：潛在類別（例如：我們之前說的 Safe, Prev., Risk）。
+    
+
+## 這個條件的白話文意思是：
+
+「**在給定相同的背景特徵 ($W_i$) 下，一個人的敏感屬性 ($A_i$) 與他的潛在類別 ($R_i$) 是完全獨立（沒有關聯）的。**」
+
+舉個具體的例子：
+
+假設我們收集了足夠多的背景資料 $W_i$，比如我們知道有兩個人，他們的「學歷、收入、過去都沒有犯罪紀錄」等客觀條件都一模一樣。
+
+這個條件假設：既然他們的背景 $W_i$ 都一樣了，那麼無論其中一個是 A 種族、另一個是 B 種族 ($A_i$)，他們骨子裡屬於「高風險 (Risk)」或是「絕對安全 (Safe)」這個潛在類別 ($R_i$) 的機率，就應該是一樣的。
 
 
 ### 1. 反事實公平性 (Counterfactual Fairness)
@@ -683,3 +739,112 @@ $Pr(Di = 1 | R = (1, 1), Ai) = \displaystyle\frac{Pr(Di = 1, Yi = 1 | Ai)}{Pr(Ri
 - **具體含義：** 這意味著，為了達到 Principal Fairness，系統**允許（甚至鼓勵）**決策者「直接考慮種族」。
     
     - _例子：_ 就像「積極平權措施（Affirmative Action）」。雖然直接看種族 ($A \to D$) 看起來像是歧視，但如果這樣做的目的是為了抵銷歷史造成的不公 ($H \to D$)，讓最終結果對不同族群的能力者一視同仁，那麼在 Principal Fairness 眼中，這就是公平的。
+
+
+## 1. 破關鑰匙：函數 $m_d(A_i)$
+
+投影片最下方定義了一個函數：$m_d(A_i) = E\{\Pr(Y_i = 1 \mid D_i = d, X_i) \mid A_i\}$。
+
+- **白話文：** 這個函數其實就是一個**標準的機器學習預測模型**。它算的是：針對某個特定族群（$A_i$，例如某個種族），在給定他們所有的背景特徵（$X_i$），並且法官做出特定決定（$d=0$ 釋放 或 $d=1$ 關押）的情況下，他們最終**發生犯罪（$Y_i=1$）的平均預測機率**。
+    
+- 只要你有過去的歷史資料（包含決策 $D$、特徵 $X$、結果 $Y$），你就可以訓練一個模型來算出這個 $m_0$（放出去的犯罪率）和 $m_1$（關起來的犯罪率）。
+    
+
+## 2. 揭開潛在類別 ($R_i$) 的真面目
+
+有了 $m_0$ 和 $m_1$ 這兩個可以用程式算出來的數字，我們就可以直接代入中間的三個公式，算出每個人骨子裡屬於哪種人：
+
+- **絕對安全 Safe $(0, 0)$：** $\Pr(R_i = (0, 0) \mid A_i) = 1 - m_0(A_i)$。
+    
+    - **邏輯：** $m_0$ 是「放出去會犯罪的機率」。那麼 $1 - m_0$ 就是「放出去**不會**犯罪的機率」。因為單調性假設（關起來不會更糟），只要放出去不會犯罪，這個人就是絕對安全的乖寶寶。
+        
+- **高風險 Risk $(1, 1)$：** $\Pr(R_i = (1, 1) \mid A_i) = m_1(A_i)$。
+    
+    - **邏輯：** $m_1$ 是「就算關起來還是會犯罪的機率」（例如在監獄裡打架）。這群人無論如何都會惹事，就是絕對的高風險族群。
+        
+- **可預防 Prev. $(0, 1)$：** $\Pr(R_i = (0, 1) \mid A_i) = m_0(A_i) - m_1(A_i)$。
+    
+    - **邏輯：** 放出去會犯罪的總機率 ($m_0$)，減掉那些就算關起來也還是會犯罪的死硬派 ($m_1$)，剩下的就是「只要關起來就能成功阻止他犯罪」的人。
+        
+
+## 3. 最上面的條件機率公式
+
+$\Pr(Y_i(1) = 1 \mid A_i, Y_i(0) = 1) = \frac{m_1(A_i)}{m_0(A_i)}$
+
+- **白話文：** 在那些「如果放出去就一定會犯罪 ($Y_i(0)=1$)」的特定族群 $A_i$ 中，有多大的比例是「就算關起來也還是會犯罪 ($Y_i(1)=1$)」的？
+    
+- 數學上這就是拿 Risk 的機率 ($m_1$) 去除以放出去會犯罪的總機率 ($m_0$)。這可以用來評估「羈押」這個手段，對這個族群到底有沒有實際的預防效果。
+
+
+這張投影片我們終於進入到**「如何實際訓練 AI」**的階段了！
+
+前面我們花了很多力氣去算那些看不見的「潛在類別 ($R$)」，例如誰是「絕對安全 Safe」、誰是「高風險 Risk」。
+
+但在實務上，當你要寫程式去訓練一個新的 AI 模型（這裡代號叫 $\delta(V_i)$，Policy）時，你會遇到一個致命的問題：**你的訓練資料庫裡，根本沒有 $R$ 這個明確的標籤可以讓 AI 學習。**
+
+因為我們只能算出每個人「屬於某個類別的機率」（也就是上一張投影片算出來的數字），而不知道他們「百分之百」是誰。
+
+那該怎麼教 AI 做到 Principal Fairness 呢？這張 **Theorem 6** 給出的解法叫做：**加權期望值 (Weighted Expectation)**。
+
+## 核心主角與特徵
+
+- **$\delta(V_i)$ (Policy / 決策模型)**：
+    
+    - **白話文：** 這就是我們**正在訓練的 AI 系統**。
+        
+    - 它會吃進資料，然後吐出一個決定（例如 $\delta = 1$ 代表決定關押，$\delta = 0$ 代表釋放）。
+        
+- **$V_i$ (Features / 可見特徵)**：
+    
+    - **白話文：** AI 用來做決定的「**個人背景資料**」。
+        
+    - 例如這個人的年齡、教育程度、過往紀錄等。AI ($\delta$) 就是看著這些資料 ($V_i$) 來做決定的。
+        
+- **$A_i$ (Protected Attribute / 敏感屬性)**：
+    
+    - **白話文：** 我們**不想讓系統產生歧視的特徵**。
+        
+    - 最常見的就是「種族」或「性別」。
+        
+
+## 潛在類別（看不見的真實屬性）
+
+- **$R_i$ (Latent Stratum / 潛在類別)**：
+    
+    - **白話文：** 這個人骨子裡**真正的行為模式**。
+        
+    - 也就是我們前面一直提到的：他是「絕對安全 (Safe)」、「可預防 (Prev.)」還是「高風險 (Risk)」。
+        
+- **$r$ (Specific Latent Type / 特定類別)**：
+    
+    - **白話文：** 我們**現在正在計算的「某一個」類別**。
+        
+    - 例如，如果我們現在想評估 AI 對乖寶寶公不公平，我們就會把 $r$ 設定為 "Safe"。
+        
+
+## 連接理論與實作的橋樑
+
+- **$e_r(V_i, A_i)$ (Probability Weight / 機率權重)**：
+    
+    - **白話文：** 這是我們算出來的「**機率分數**」。
+        
+    - 代表：「給定這個人的特徵 ($V_i$) 和種族 ($A_i$)，他有多大的機率屬於潛在類別 $r$」。我們就是用這個數字來決定他在算式裡的「發言權」有多重。
+        
+- **$E[\dots]$ (Expectation / 期望值)**：
+    
+    - **白話文：** 簡單來說就是「**算平均**」。
+        
+    - 把所有人的數據乘上權重之後，加總起來算一個整體平均值。
+        
+
+---
+
+## 把變數湊在一起看：你畫藍底的那一段
+
+你圖片中用藍色標記的這段：$\Pr(\delta(V_i) = 1 \mid R_i = r, A_i)$
+
+用上面的變數翻譯成白話文就是：
+
+**「在某個特定的種族 ($A_i$) 中，針對那些骨子裡真正屬於某個類別 ($R_i = r$，例如 Safe) 的人，我們訓練出來的 AI ($\delta$) 決定把他們關起來 ($\delta=1$) 的機率是多少？」**
+
+這條公式 (Theorem 6) 的偉大之處就在於：即使我們不知道每個人的 $R_i$ 到底是什麼，我們還是可以用等號右邊那一坨（包含 AI 預測 $\delta$ 和機率權重 $e_r$ 的期望值），精準算出左邊這個我們夢寐以求的公平性指標！**
